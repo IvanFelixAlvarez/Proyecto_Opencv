@@ -1,4 +1,6 @@
-Lógica visión por computador OpenCV
+Lógica visión por computador en OpenCV
+--------------------------------------
+--------------------------------------
 
 	Este proyecto intenta ser un ejemplo de inteligencia de un robot que detecte ciertos
 	cuadrados en un orden (por ejemplo, rojo, verde y azul) y actue en base a los cuadrados
