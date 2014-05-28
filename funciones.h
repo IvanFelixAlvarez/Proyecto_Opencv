@@ -68,4 +68,14 @@ Point puntoMedio(vector<Point> contorno){
 
 }
 
+int cifrasNumero(int num){
+	int contador=0;
+	while(num > 0)
+    {
+        num = num / 10;
+        contador++;
+    }
+    return contador;
+}
+
 #endif

@@ -18,7 +18,7 @@ int main()
 	vector<string> orden;
 	orden.push_back("azul");
 	orden.push_back("verde");
-	//orden.push_back("rojo");
+	orden.push_back("rojo");
 
 	string imagen_entrada;
 
@@ -54,12 +54,12 @@ int main()
  	//Segmentación
  	//2.1. Se segmenta la imagen mediante la localización de los bordes de la imagen mediante Canny o Laplace.
  	Canny(src, bordes, 100, 255);
- 	imshow("1. Bordes - Canny", bordes);
+ 	//imshow("1. Bordes - Canny", bordes);
 
  	//2.2. Se dilata y erosiona para unir los píxeles de los distintos bordes
  	dilation(bordes, bordes, 1, 0);
  	erosion(bordes, bordes, 1, 0);
- 	imshow("1.1. Dilatacion_Erosion", bordes);
+ 	//imshow("1.1. Dilatacion_Erosion", bordes);
 
  	//2.3. Se localizan los contornos
   	findContours(bordes, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
@@ -83,36 +83,28 @@ int main()
 	            drawContours( mascara, contours, i, colour2, CV_FILLED ); //Con relleno
 	            drawContours( src, contours, i, colour1); //Sin rellenar
 	        }
-	imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
+	//imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
 
-	imshow("2-3. Mascara", mascara);
+	//imshow("2-3. Mascara", mascara);
 	// Se aplica la máscara de 0 y 1 para extraer todo aquello de la imagen que sea distinto de 0 en la máscara.
-    Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
-    cuadrados.setTo(Scalar(0,0,0));
-    origen.copyTo(cuadrados, mascara);
-    imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
+    //Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
+    //cuadrados.setTo(Scalar(0,0,0));
+    //origen.copyTo(cuadrados, mascara);
+    //imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
 
     string clase = "";
     Point medio;
-    //int valor_color;
 
     for (std::map<int,Mat>::iterator it=matrices_cuadrados.begin(); it!=matrices_cuadrados.end() && clase != orden[orden.size()-1]; ++it){
-    	ostringstream ss;
+    	//ostringstream ss;
     
     	clase = clasificadorCuadrados(it->second);
 
     	medio = puntoMedio(contours[it->first]);
 
-    	ss << it->first << " | " << clase << " PM: " << medio;
+    	//ss << it->first << " | " << clase << " PM: " << medio;
 
-        /*if(clase == "rojo") valor_color = 2;
-        else if(clase == "verde") valor_color = 3;
-        else valor_color = 4;
-
-        if (serial != 0)
-        	fprintf(serial, "%d", valor_color);*/
-
-    	imshow(ss.str(), it->second);
+    	//imshow(ss.str(), it->second);
     }
 
     //3. Actuación.
@@ -126,6 +118,7 @@ int main()
     	line(src, img_medio1, img_medio2, Scalar(0, 153, 0));
     	line(src, img_medio1, medio, Scalar(0, 153, 0));
 
+    	//Vectores directores
     	Point vect_director1(img_medio2.x - img_medio1.x, img_medio2.y - img_medio1.y);
     	Point vect_director2(medio.x - img_medio1.x, medio.y - img_medio1.y);
 
@@ -135,21 +128,41 @@ int main()
     	cout << "Arriba: "<<arriba << endl;
     	cout << "Abajo: "<<abajo << endl;
 
+    	//Ángulo entre dos rectas
     	double angulo_ = acos(arriba/abajo) * 180/M_PI;
 
     	float decimal = angulo_ - (int)angulo_;
-
     	int angulo;
-
-    	if(decimal >= 0.5) angulo = ceil(angulo_);
-    	else angulo = floor(angulo_);
+    	if(decimal >= 0.5) angulo = ceil(angulo_); //Redondeo para arriba
+    	else angulo = floor(angulo_); //Redondeo para abajo
 
     	cout << "Angulo: " << angulo << endl;
+
+    	/*Envío 3 datos en serie. 
+    		- Le digo que vamos a mover el motor paso a paso
+    		- Luego si para la derecha o la izquierda
+    		- Cifras que tiene el angulo
+    		- Le envío el ángulo
+    	*/
+    	if (serial != 0){
+        	fprintf(serial, "%d", 1);
+        	if(medio.x < img_medio1.x)
+        		fprintf(serial, "%d", 1);
+        	else
+        		fprintf(serial, "%d", 2);
+        	fprintf(serial, "%d", cifrasNumero(angulo));
+        	fprintf(serial, "%d", angulo);
+
+        	//Volvemos para atrás
+        	fprintf(serial, "%d", 1);
+        	if(medio.x < img_medio1.x)
+        		fprintf(serial, "%d", 2);
+        	else
+        		fprintf(serial, "%d", 1);
+        	fprintf(serial, "%d", cifrasNumero(angulo));
+        	fprintf(serial, "%d", angulo);
+    	}
     }
-    	
-
-    orden.pop_back();
-
 
     imshow("Centros", src);
 
