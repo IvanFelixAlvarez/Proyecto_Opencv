@@ -6,6 +6,7 @@
 #include <algorithm>    // sort, max_element, min_element
 #include <map>
 #include <vector>
+#include <cmath>
 
 using namespace cv;
 using namespace std;
@@ -17,7 +18,7 @@ int main()
 	vector<string> orden;
 	orden.push_back("azul");
 	orden.push_back("verde");
-	orden.push_back("rojo");
+	//orden.push_back("rojo");
 
 	string imagen_entrada;
 
@@ -115,8 +116,36 @@ int main()
     }
 
     //3. Actuación.
-    if(clase == orden[orden.size()-1])
+    if(clase == orden[orden.size()-1]){
     	circle(src, medio, 7, Scalar(0, 233, 255), CV_FILLED);
+
+    	Point img_medio1(src.cols/2, src.rows);
+    	Point img_medio2(src.cols/2, 0);
+
+    	circle(src, img_medio1, 7, Scalar(0, 153, 0), CV_FILLED);
+    	line(src, img_medio1, img_medio2, Scalar(0, 153, 0));
+    	line(src, img_medio1, medio, Scalar(0, 153, 0));
+
+    	Point vect_director1(img_medio2.x - img_medio1.x, img_medio2.y - img_medio1.y);
+    	Point vect_director2(medio.x - img_medio1.x, medio.y - img_medio1.y);
+
+    	float arriba = abs(vect_director1.x * vect_director2.x + vect_director1.y * vect_director2.y);
+    	float abajo = sqrt(pow(vect_director1.x,2) + pow(vect_director1.y,2)) * sqrt(pow(vect_director2.x,2) + pow(vect_director2.y,2));
+    		
+    	cout << "Arriba: "<<arriba << endl;
+    	cout << "Abajo: "<<abajo << endl;
+
+    	double angulo_ = acos(arriba/abajo) * 180/M_PI;
+
+    	float decimal = angulo_ - (int)angulo_;
+
+    	int angulo;
+
+    	if(decimal >= 0.5) angulo = ceil(angulo_);
+    	else angulo = floor(angulo_);
+
+    	cout << "Angulo: " << angulo << endl;
+    }
     	
 
     orden.pop_back();
