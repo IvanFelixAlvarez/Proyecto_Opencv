@@ -50,6 +50,8 @@ int main()
  	// se copia, se convierte en una referencia.
   	//src = origen;
 
+ 	imshow("Origen", src);
+
  	Mat mascara = Mat::zeros( src.size(), CV_8UC3 );
 
  	//Segmentación
