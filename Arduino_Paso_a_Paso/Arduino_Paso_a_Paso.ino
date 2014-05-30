@@ -1,5 +1,5 @@
-#define DIR 12
-#define STEP 11
+#define DIR 11
+#define STEP 10
 
 int accion, movimiento, cifrasAngulo, angulo, aux, aux2, pasos;
 
@@ -43,9 +43,9 @@ void loop(){
     
     for(int i=0;i<pasos;i++){
       digitalWrite(STEP,HIGH);
-      delay(1);
+      delay(100);
       digitalWrite(STEP,LOW);
-      delay(1);
+      delay(100);
     }
     
     Serial.print("Accion: ");

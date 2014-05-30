@@ -17,12 +17,12 @@ int main()
 
 	vector<string> orden;
 	orden.push_back("azul");
-	orden.push_back("verde");
-	orden.push_back("rojo");
+	//orden.push_back("verde");
+	//orden.push_back("rojo");
 
 	string imagen_entrada;
 
-	FILE* serial = fopen("/dev/ttyACM0", "w");
+	FILE* serial = fopen("/dev/ttyACM2", "w");
 
 	if (serial == 0) {
 		printf("Fallo al abrir el puerto serie\n");
@@ -45,21 +45,22 @@ int main()
     //Preprocesamiento.
     //1. Redimensionamos la imagen original. (Hay perdida de información, puesto que reducimos el número de píxeles)
     //Nota: La imagen de destino debe ser diferente de la de origen.
-    resize(origen, src, Size(origen.cols/4, origen.rows/4));
+    resize(origen, src, Size(origen.cols/3, origen.rows/3));
  	origen = src.clone(); //La copiamos en origen para mantener la imagen inicial - Se debe clonar la matriz sino, no
  	// se copia, se convierte en una referencia.
+  	//src = origen;
 
  	Mat mascara = Mat::zeros( src.size(), CV_8UC3 );
 
  	//Segmentación
  	//2.1. Se segmenta la imagen mediante la localización de los bordes de la imagen mediante Canny o Laplace.
- 	Canny(src, bordes, 100, 255);
- 	//imshow("1. Bordes - Canny", bordes);
+ 	Canny(src, bordes, 30, 120);
+ 	imshow("1. Bordes - Canny", bordes);
 
  	//2.2. Se dilata y erosiona para unir los píxeles de los distintos bordes
  	dilation(bordes, bordes, 1, 0);
  	erosion(bordes, bordes, 1, 0);
- 	//imshow("1.1. Dilatacion_Erosion", bordes);
+ 	imshow("1.1. Dilatacion_Erosion", bordes);
 
  	//2.3. Se localizan los contornos
   	findContours(bordes, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
@@ -83,32 +84,32 @@ int main()
 	            drawContours( mascara, contours, i, colour2, CV_FILLED ); //Con relleno
 	            drawContours( src, contours, i, colour1); //Sin rellenar
 	        }
-	//imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
+	imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
 
-	//imshow("2-3. Mascara", mascara);
+	imshow("2-3. Mascara", mascara);
 	// Se aplica la máscara de 0 y 1 para extraer todo aquello de la imagen que sea distinto de 0 en la máscara.
-    //Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
-    //cuadrados.setTo(Scalar(0,0,0));
-    //origen.copyTo(cuadrados, mascara);
-    //imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
+    Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
+    cuadrados.setTo(Scalar(0,0,0));
+    origen.copyTo(cuadrados, mascara);
+    imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
 
     string clase = "";
     Point medio;
 
     for (std::map<int,Mat>::iterator it=matrices_cuadrados.begin(); it!=matrices_cuadrados.end() && clase != orden[orden.size()-1]; ++it){
-    	//ostringstream ss;
+    	ostringstream ss;
     
     	clase = clasificadorCuadrados(it->second);
 
     	medio = puntoMedio(contours[it->first]);
 
-    	//ss << it->first << " | " << clase << " PM: " << medio;
+    	ss << it->first << " | " << clase << " PM: " << medio;
 
-    	//imshow(ss.str(), it->second);
+    	imshow(ss.str(), it->second);
     }
 
     //3. Actuación.
-    if(clase == orden[orden.size()-1]){
+    //if(clase == orden[orden.size()-1]){
     	circle(src, medio, 7, Scalar(0, 233, 255), CV_FILLED);
 
     	Point img_medio1(src.cols/2, src.rows);
@@ -162,7 +163,7 @@ int main()
         	fprintf(serial, "%d", cifrasNumero(angulo));
         	fprintf(serial, "%d", angulo);
     	}
-    }
+    //}
 
     imshow("Centros", src);
 

@@ -1,0 +1,67 @@
+\documentclass[11pt]{article}
+
+\usepackage{listings} % Paquete para insertar códigos desde fichero
+
+\usepackage[usenames,dvipsnames]{color} % Paquete para establecer colores por el nombre
+\usepackage{mdframed} % Paquete para los recuadros de los códigos
+\usepackage[utf8]{inputenc} % Para poner acentos y eñes directamente.
+\usepackage{anysize} % Para establecer el margen
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[nottoc]{tocbibind}
+\usepackage{framed, color}
+
+
+
+\title{\textbf{Aplicaciones Micro-Robóticas\\
+		       Proyecto de visión por computador con OpenCV}}
+\author{\\Iván Félix Álvarez García\\\\\\
+		\includegraphics[scale=0.45]{logo_uca}\\
+		Universidad de Cádiz}
+\date{30 de mayo de 2014}
+
+
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape
+}
+
+\lstdefinelanguage{XML}
+{
+  morestring=[b]",
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  stringstyle=\color{black},
+  identifierstyle=\color{darkblue},
+  keywordstyle=\color{cyan},
+  morekeywords={xmlns,version,type}% list your attributes here
+}
+
+
+\marginsize{2cm}{2cm}{1cm}{3cm} % Establecemos los margenes
+		
+\begin{document}
+\maketitle
+\newpage
+
+\section{Introducción}
+
+Este documento tiene como objetivo explicar el algoritmo de forma visual, sin entrar en detalle de implementación, para que, junto a las tomas de decisión que se han tenido que tomar, mostrar la trayectoria que he seguido a lo largo del proyecto.
+
+\section{Captación}
+
+
+\definecolor{shadecolor}{gray}{0.7}
+\begin{shaded}
+\textbf{Aclaración}. Se ha de concretar que estos elementos básicos se encuentran dentro de la secuencia, ya que al fin y al cabo deseamos que estas actividades sean ejecutadas de forma secuencial.
+\end{shaded}
+
+
+
+\end{document}

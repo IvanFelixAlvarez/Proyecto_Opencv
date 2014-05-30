@@ -10,4 +10,4 @@ despertar:
 	./brain
 
 clean:
-	rm -f brain *o *~
+	${RM} brain *.o *~
