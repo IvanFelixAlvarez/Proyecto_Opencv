@@ -14,34 +14,35 @@ void loop(){
   angulo = 0;
   aux2 = 1;
   
+  //Esperamos a ue llegue informacion por el puerto Serial
   while(Serial.available() <=0);
   accion = Serial.read()-48; //Convierto el numero del 0 al 9
-  if(accion == 1){
-    while(Serial.available() <=0);
-    movimiento = Serial.read()-48;
+  if(accion == 1){ //Se desea mover la cadera
+    while(Serial.available() <=0); //Se espera, de nuevo, a que exista informacion en el Serial
+    movimiento = Serial.read()-48; //Convierto el numero del 0 al 9
     
-    while(Serial.available() <=0);
-    cifrasAngulo = Serial.read()-48;
+    while(Serial.available() <=0); //Esperamos
+    cifrasAngulo = Serial.read()-48; //Calculo cuantas cifras tiene el angulo
     
     Serial.print("Cifras Angulo: ");
     Serial.println(cifrasAngulo);
     
-    while(Serial.available() <=0);
-    while(cifrasAngulo > 0){
+    while(Serial.available() <=0); //Esperamos
+    while(cifrasAngulo > 0){ //Dadas el numero de cifras calculo el angulo
       aux = Serial.read()-48;
       angulo = angulo*aux2 + aux; 
       aux2 *= 10;
       cifrasAngulo--;
     }
     
-    if(movimiento == 1)
+    if(movimiento == 1) //Giro para la izquierda
       digitalWrite(DIR, HIGH);
     else
-      digitalWrite(DIR, LOW);
+      digitalWrite(DIR, LOW); //Giro para la derecha
     
     pasos = (angulo*400) / 90; //Regla de 3
     
-    for(int i=0;i<pasos;i++){
+    for(int i=0;i<pasos;i++){ //Me muevo
       digitalWrite(STEP,HIGH);
       delay(100);
       digitalWrite(STEP,LOW);

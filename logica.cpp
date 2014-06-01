@@ -16,9 +16,9 @@ int main()
 {
 
 	vector<string> orden;
-	orden.push_back("azul");
+	//orden.push_back("azul");
 	//orden.push_back("verde");
-	//orden.push_back("rojo");
+	orden.push_back("rojo");
 
 	string imagen_entrada;
 
@@ -38,7 +38,6 @@ int main()
 
     vector<vector<Point> > contours;
   	vector<Vec4i> hierarchy;
-  	RNG rng(12345);
 
   	map<int, Mat> matrices_cuadrados;
 
@@ -50,19 +49,19 @@ int main()
  	// se copia, se convierte en una referencia.
   	//src = origen;
 
- 	imshow("Origen", src);
+ 	//imshow("Origen", src);
 
  	Mat mascara = Mat::zeros( src.size(), CV_8UC3 );
 
  	//Segmentación
  	//2.1. Se segmenta la imagen mediante la localización de los bordes de la imagen mediante Canny o Laplace.
  	Canny(src, bordes, 30, 120);
- 	imshow("1. Bordes - Canny", bordes);
+ 	//imshow("1. Bordes - Canny", bordes);
 
  	//2.2. Se dilata y erosiona para unir los píxeles de los distintos bordes
  	dilation(bordes, bordes, 1, 0);
  	erosion(bordes, bordes, 1, 0);
- 	imshow("1.1. Dilatacion_Erosion", bordes);
+ 	//imshow("1.1. Dilatacion_Erosion", bordes);
 
  	//2.3. Se localizan los contornos
   	findContours(bordes, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
@@ -86,32 +85,35 @@ int main()
 	            drawContours( mascara, contours, i, colour2, CV_FILLED ); //Con relleno
 	            drawContours( src, contours, i, colour1); //Sin rellenar
 	        }
-	imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
+	//imshow("2. Contornos - Nivel 2 de jerarquia", src);		 			
 
-	imshow("2-3. Mascara", mascara);
+	//imshow("2-3. Mascara", mascara);
 	// Se aplica la máscara de 0 y 1 para extraer todo aquello de la imagen que sea distinto de 0 en la máscara.
-    Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
-    cuadrados.setTo(Scalar(0,0,0));
-    origen.copyTo(cuadrados, mascara);
-    imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
+    //Mat cuadrados(origen.rows, origen.cols, CV_8UC3);
+    //cuadrados.setTo(Scalar(0,0,0));
+    //origen.copyTo(cuadrados, mascara);
+    //imshow("3. Recorte - Extraemos los cuadrados del fondo ", cuadrados);
 
     string clase = "";
     Point medio;
 
+    //3. Reconocimiento
     for (std::map<int,Mat>::iterator it=matrices_cuadrados.begin(); it!=matrices_cuadrados.end() && clase != orden[orden.size()-1]; ++it){
-    	ostringstream ss;
+    	//ostringstream ss;
     
     	clase = clasificadorCuadrados(it->second);
 
     	medio = puntoMedio(contours[it->first]);
 
-    	ss << it->first << " | " << clase << " PM: " << medio;
+    	//ss << it->first << " | " << clase << " PM: " << medio;
 
-    	imshow(ss.str(), it->second);
+    	//imshow(ss.str(), it->second);
     }
+    circle(src, medio, 7, Scalar(0, 233, 255), CV_FILLED);
+    imshow("Hoaras", src);
 
     //3. Actuación.
-    //if(clase == orden[orden.size()-1]){
+    if(clase == orden[orden.size()-1]){
     	circle(src, medio, 7, Scalar(0, 233, 255), CV_FILLED);
 
     	Point img_medio1(src.cols/2, src.rows);
@@ -136,12 +138,14 @@ int main()
 
     	float decimal = angulo_ - (int)angulo_;
     	int angulo;
+
+    	//Redondeamos, ya que a la arduino sólo le pueden llegar números enteros.
     	if(decimal >= 0.5) angulo = ceil(angulo_); //Redondeo para arriba
     	else angulo = floor(angulo_); //Redondeo para abajo
 
     	cout << "Angulo: " << angulo << endl;
 
-    	/*Envío 3 datos en serie. 
+    	/*Envío 4 datos en serie. 
     		- Le digo que vamos a mover el motor paso a paso
     		- Luego si para la derecha o la izquierda
     		- Cifras que tiene el angulo
@@ -165,7 +169,7 @@ int main()
         	fprintf(serial, "%d", cifrasNumero(angulo));
         	fprintf(serial, "%d", angulo);
     	}
-    //}
+    }
 
     imshow("Centros", src);
 
